@@ -1,9 +1,11 @@
 <?php
 require 'config.php';
 
-$email = $_POST['email'];
-$username = $_POST['username'];
-$password = $_POST['password'];
+$data = json_decode(file_get_contents('php://input'), true);
+
+$username = $data["username"];
+$password = $data["password"];
+$email = $data['email'];
 
 //$email = 'test@usc.edu';
 //$username = 'test';
