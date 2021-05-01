@@ -39,14 +39,5 @@ function check_user_id($mysqli, $user_id)
 	if ($user_select_result->num_rows != 1) {
 		error_respond(401, 'No such user.');
 	}
-
-//	$sql = "SELECT * FROM user_info WHERE id = $user_id;";
-//	$user_select_result = $mysqli->query($sql);
-//	if (!$user_select_result) {
-//		error_respond(401, $mysqli->error);
-//	}
-//	if ($user_select_result->num_rows == 0) {
-//		error_respond(401, 'No such User.');
-//	}
 	return $user_select_result;
 }

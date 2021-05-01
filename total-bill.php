@@ -13,7 +13,7 @@ $mysqli = get_mysqli();
 check_user_id($mysqli, $user_id);
 
 
-$statement = $mysqli->prepare("SELECT bill_amount FROM bill_info WHERE payer_id = ?;");
+$statement = $mysqli->prepare("SELECT amount FROM bill_info WHERE payer_id = ?;");
 $statement->bind_param('i', $user_id);
 $statement->execute();
 $bill_select_results = $statement->get_result();
