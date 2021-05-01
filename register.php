@@ -8,7 +8,6 @@ $password = $data['password'];
 $email = $data['email'];
 
 $message = '';
-
 if (!isset($email) || trim($email) == '') {
 	$status_code = 401;
 	$message .= 'No Email. ';
@@ -28,46 +27,60 @@ if ($message !== '') {
 
 $mysqli = get_mysqli();
 
-
 $password = hash('sha256', $password);
 
 
 //Check for dup email
-$sql = "SELECT * FROM user_info WHERE email = '$email';";
-$result_email = $mysqli->query($sql);
-if (!$result_email) {
+$statement = $mysqli->prepare("SELECT * FROM user_info WHERE email = ?;");
+$statement->bind_param('s', $email);
+$statement->execute();
+$email_select_result = $statement->get_result();
+if (!$email_select_result) {
 	error_respond(401, $mysqli->error);
 }
-if ($result_email->num_rows != 0) {
+if ($email_select_result->num_rows != 0) {
 	error_respond(401, 'Email already exists.');
 }
 
 
 //Check for dup username
-$sql = "SELECT * FROM user_info WHERE username = '$username';";
-
-$result_user = $mysqli->query($sql);
-if (!$result_user) {
+$statement = $mysqli->prepare("SELECT * FROM user_info WHERE username = ?;");
+$statement->bind_param('s', $username);
+$statement->execute();
+$user_select_result = $statement->get_result();
+if (!$user_select_result) {
 	error_respond(401, $mysqli->error);
 }
-if ($result_user->num_rows != 0) {
+if ($user_select_result->num_rows != 0) {
 	error_respond(401, 'Username already exists.');
 }
 
 
-$sql = "INSERT INTO
-    	user_info(email, username, password, is_admin, budget)
-		VALUES('$email', '$username', '$password', FALSE, NULL);";
-$result_insert = $mysqli->query($sql);
-if (!$result_insert) {
+//Insert the new user record
+$statement = $mysqli->prepare("
+		INSERT INTO
+		user_info(email, username, password, is_admin, budget)
+		VALUES(?, ?, ?, FALSE, NULL);");
+$statement->bind_param('sss', $email, $username, $password);
+$user_insert_result = $statement->execute();
+if (!$user_insert_result) {
 	error_respond(401, $mysqli->error);
+}
+if ($statement->affected_rows != 1) {
+	error_respond(401, 'Register failed.');
 }
 
 
-$sql = "SELECT id FROM user_info WHERE email = '$email' AND username = '$username';";
-$result = $mysqli->query($sql);
-if (!$result) {
+//Get the id of the new user
+$statement = $mysqli->prepare("SELECT id FROM user_info WHERE email = ? AND username = ?;");
+$statement->bind_param('ss', $email, $username);
+$statement->execute();
+$user_select_result = $statement->get_result();
+if (!$user_select_result) {
 	error_respond(401, $mysqli->error);
+}
+if ($user_select_result->num_rows != 1) {
+	error_respond(401, 'Register failed.');
 }
 
 
@@ -76,9 +89,7 @@ $message = 'Register Success.';
 $response = [
 	'status_code' => $status_code,
 	'message' => $message,
-	'user_id' => $result_user['id']
+	'user_id' => $user_select_result['id']
 ];
 
 echo json_encode($response);
-exit();
-

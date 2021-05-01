@@ -23,14 +23,7 @@ $mysqli = get_mysqli();
 
 
 //Check if user exists
-$sql = "SELECT budget FROM user_info WHERE id = $user_id;";
-$budget_select_result = $mysqli->query($sql);
-if (!$budget_select_result) {
-	error_respond(401, $mysqli->error);
-}
-if ($budget_select_result->num_rows == 0) {
-	error_respond(401, 'No such User.');
-}
+$budget_select_result = check_user_id($mysqli, $user_id);
 
 
 //Update the budget

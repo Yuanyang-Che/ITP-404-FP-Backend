@@ -8,7 +8,6 @@ $password = $data['password'];
 
 
 $message = '';
-
 if (!isset($username) || trim($username) == '') {
 	$message .= "No Username. ";
 }
@@ -25,14 +24,17 @@ $mysqli = get_mysqli();
 $password = hash('sha256', $password);
 
 
-$sql = "SELECT * FROM user_info WHERE username = '$username' AND password = '$password';";
-$result_user = $mysqli->query($sql);
-if (!$result_user) {
+$statement = $mysqli->prepare("SELECT * FROM user_info WHERE username = ? AND password = ?;");
+$statement->bind_param('ss', $username, $password);
+$statement->execute();
+$user_select_result = $statement->get_result();
+if (!$user_select_result) {
 	error_respond(401, $mysqli->error);
 }
-if ($result_user->num_rows == 0) {
+if ($user_select_result->num_rows != 1) {
 	error_respond(401, 'Incorrect User Name or Password');
 }
+
 
 //Success
 $status_code = 200;
@@ -40,8 +42,7 @@ $message = 'Login Success.';
 $response = [
 	'status_code' => $status_code,
 	'message' => $message,
-	'user_id' => $result_user['id']
+	'user_id' => $user_select_result['id']
 ];
 
 echo json_encode($response);
-

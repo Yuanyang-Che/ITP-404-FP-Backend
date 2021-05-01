@@ -23,3 +23,30 @@ function get_mysqli(): mysqli
 	}
 	return $mysqli;
 }
+
+
+function check_user_id($mysqli, $user_id)
+{
+	$statement = $mysqli->prepare("SELECT * FROM user_info WHERE id = ?;");
+	$statement->bind_param('i', $user_id);
+	
+	$statement->execute();
+	$user_select_result = $statement->get_result();
+	
+	if (!$user_select_result) {
+		error_respond(401, $mysqli->error);
+	}
+	if ($user_select_result->num_rows != 1) {
+		error_respond(401, 'No such user.');
+	}
+
+//	$sql = "SELECT * FROM user_info WHERE id = $user_id;";
+//	$user_select_result = $mysqli->query($sql);
+//	if (!$user_select_result) {
+//		error_respond(401, $mysqli->error);
+//	}
+//	if ($user_select_result->num_rows == 0) {
+//		error_respond(401, 'No such User.');
+//	}
+	return $user_select_result;
+}

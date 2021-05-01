@@ -2,7 +2,7 @@
 require 'config.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
-
+$data = $_GET;
 $user_id = $data['user_id'];
 
 if (!isset($user_id) && trim($user_id) === '') {
@@ -12,15 +12,7 @@ if (!isset($user_id) && trim($user_id) === '') {
 
 $mysqli = get_mysqli();
 
-$sql = "SELECT budget FROM user_info WHERE id = $user_id;";
-$result_budget = $mysqli->query($sql);
-if (!$result_budget) {
-	error_respond(401, $mysqli->error);
-}
-if ($result_budget->num_rows == 0) {
-	error_respond(401, 'No such User.');
-}
-
+$result_budget = check_user_id($mysqli, $user_id);
 
 $budget = $result_budget->fetch_assoc()['budget'];
 if ($budget === null) {
