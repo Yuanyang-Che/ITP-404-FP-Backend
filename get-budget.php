@@ -10,14 +10,9 @@ if (!isset($user_id) && trim($user_id) === '') {
 }
 
 
-$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-if ($mysqli->connect_errno) {
-	error_respond(401, $mysqli->error);
-}
+$mysqli = get_mysqli();
 
-
-$sql = "SELECT budget FROM user_info WHERE id = '$user_id';";
-
+$sql = "SELECT budget FROM user_info WHERE id = $user_id;";
 $result_budget = $mysqli->query($sql);
 if (!$result_budget) {
 	error_respond(401, $mysqli->error);

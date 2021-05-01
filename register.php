@@ -26,10 +26,7 @@ if ($message !== '') {
 }
 
 
-$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-if ($mysqli->connect_errno) {
-	error_respond(401, $mysqli->connect_error);
-}
+$mysqli = get_mysqli();
 
 
 $password = hash('sha256', $password);
@@ -37,7 +34,6 @@ $password = hash('sha256', $password);
 
 //Check for dup email
 $sql = "SELECT * FROM user_info WHERE email = '$email';";
-
 $result_email = $mysqli->query($sql);
 if (!$result_email) {
 	error_respond(401, $mysqli->error);
@@ -62,8 +58,6 @@ if ($result_user->num_rows != 0) {
 $sql = "INSERT INTO
     	user_info(email, username, password, is_admin, budget)
 		VALUES('$email', '$username', '$password', FALSE, NULL);";
-
-
 $result_insert = $mysqli->query($sql);
 if (!$result_insert) {
 	error_respond(401, $mysqli->error);
@@ -71,7 +65,6 @@ if (!$result_insert) {
 
 
 $sql = "SELECT id FROM user_info WHERE email = '$email' AND username = '$username';";
-
 $result = $mysqli->query($sql);
 if (!$result) {
 	error_respond(401, $mysqli->error);

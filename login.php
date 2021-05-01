@@ -20,17 +20,12 @@ if ($message !== '') {
 }
 
 
-$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-if ($mysqli->connect_errno) {
-	error_respond(401, $mysqli->error);
-}
-
+$mysqli = get_mysqli();
 
 $password = hash('sha256', $password);
 
 
 $sql = "SELECT * FROM user_info WHERE username = '$username' AND password = '$password';";
-
 $result_user = $mysqli->query($sql);
 if (!$result_user) {
 	error_respond(401, $mysqli->error);
