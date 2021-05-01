@@ -9,3 +9,5 @@
 
 .idea
 .git
+ignore/
+.DS_Store
