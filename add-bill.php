@@ -31,7 +31,7 @@ check_user_id($mysqli, $payer_id);
 
 
 $statement = $mysqli->prepare("
-	INSERT INTO bill_info(amount, payer_id, comment, people, date)
+	INSERT INTO bill_info(payer_id, amount, comment, people, date)
 	VALUES (?, ?, ?, ?, ?);
 ");
 $statement->bind_param('idsss', $payer_id, $amount, $comment, $peoplem, $date);
