@@ -28,16 +28,14 @@ if ($bill_select_results->num_rows == 0) {
 }
 
 
-$bills = [];
-
+$total_bill = 0;
 foreach ($bill_select_results as $bill) {
-	array_push($bills, $bill);
+	$total_bill += $bill['amount'];
 }
 
 $response = [
 	'status_code' => 200,
-	'Message' => 'All Bills Success',
-	'bills' => $bills,
+	'total_bill' => $total_bill
 ];
 
 echo json_encode($response);
