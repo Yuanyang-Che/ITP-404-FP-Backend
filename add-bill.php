@@ -34,7 +34,7 @@ $statement = $mysqli->prepare("
 	INSERT INTO bill_info(amount, payer_id, comment, people, date)
 	VALUES (?, ?, ?, ?, ?);
 ");
-$statement->bind_param('iisss', $payer_id, $amount, $comment, $peoplem, $date);
+$statement->bind_param('idsss', $payer_id, $amount, $comment, $peoplem, $date);
 $bill_INSERT_result = $statement->execute();
 if (!$bill_INSERT_result) {
 	error_respond(401, $mysqli->error);

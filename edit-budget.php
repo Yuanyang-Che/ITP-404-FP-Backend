@@ -30,14 +30,14 @@ $budget_select_result = check_user_id($mysqli, $user_id);
 $statement = $mysqli->prepare("UPDATE user_info
 		                            	SET budget = ?
 										WHERE id = ?;");
-$statement->bind_param('ii', $budget, $user_id);
+$statement->bind_param('di', $budget, $user_id);
 
 $budget_update_result = $statement->execute();
 if (!$budget_update_result) {
 	error_respond(401, $mysqli->error);
 }
 if ($statement->affected_rows != 1) {
-	error_respond(500, 'Same Budget.');
+	error_respond(500, 'Same Budget. Old' . $budget);
 }
 
 

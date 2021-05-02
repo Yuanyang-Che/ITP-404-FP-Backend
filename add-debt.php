@@ -46,7 +46,7 @@ if ($debt_select_result->num_rows == 0) {
 		INSERT INTO
 		debt_info(payer_id, receiver_id, amount)
 		VALUES (?, ?, ?);");
-	$statement->bind_param('iii', $payer_id, $receiver_id, $new_amount);
+	$statement->bind_param('iid', $payer_id, $receiver_id, $new_amount);
 	$debt_insert_result = $statement->execute();
 	
 	if (!$debt_insert_result) {
@@ -65,7 +65,7 @@ else {
 		UPDATE debt_info
 		SET amount = ?
 		WHERE payer_id = ? AND receiver_id = ?;");
-	$statement->bind_param('iii', $new_amount, $payer_id, $receiver_id);
+	$statement->bind_param('dii', $new_amount, $payer_id, $receiver_id);
 	$debt_update_result = $statement->execute();
 	
 	if (!$debt_update_result) {
