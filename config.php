@@ -41,3 +41,20 @@ function check_user_id($mysqli, $user_id)
 	}
 	return $user_select_result;
 }
+
+
+function check_bill_id($mysqli, $bill_id){
+	$statement = $mysqli->prepare("SELECT * FROM bill_info WHERE id = ?;");
+	$statement->bind_param('i', $bill_id);
+	
+	$statement->execute();
+	$bill_select_result = $statement->get_result();
+	
+	if (!$bill_select_result) {
+		error_respond(401, $mysqli->error);
+	}
+	if ($bill_select_result->num_rows != 1) {
+		error_respond(401, 'No such bill.');
+	}
+	return $bill_select_result;
+}

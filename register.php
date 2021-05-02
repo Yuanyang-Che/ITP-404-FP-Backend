@@ -89,7 +89,7 @@ $message = 'Register Success.';
 $response = [
 	'status_code' => $status_code,
 	'message' => $message,
-	'user_id' => $user_select_result['id']
+	'user_id' => $user_select_result->fetch_assoc()['id']
 ];
 
 echo json_encode($response);
