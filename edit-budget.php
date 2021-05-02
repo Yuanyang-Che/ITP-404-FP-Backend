@@ -37,7 +37,7 @@ if (!$budget_update_result) {
 	error_respond(401, $mysqli->error);
 }
 if ($statement->affected_rows != 1) {
-	error_respond(401, 'Update Budget Failed.');
+	error_respond(500, 'Same Budget.');
 }
 
 

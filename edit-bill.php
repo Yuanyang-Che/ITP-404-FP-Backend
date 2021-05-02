@@ -39,7 +39,7 @@ if (!$update_bill_result) {
 	error_respond(401, $mysqli->error);
 }
 if ($statement->affected_rows != 1) {
-	error_respond(500, 'Update bill Failed');
+	error_respond(500, 'Same Bill Info.');
 }
 
 $response = [
