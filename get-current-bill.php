@@ -14,7 +14,7 @@ check_user_id($mysqli, $user_id);
 
 
 $statement = $mysqli->prepare("
-	SELECT amount, MAX(date) AS max_date
+	SELECT id, amount, comment, people, MAX(date) AS date
 	FROM bill_info
 	WHERE payer_id = ?;");
 $statement->bind_param('i', $user_id);
