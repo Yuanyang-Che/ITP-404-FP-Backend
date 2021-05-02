@@ -24,7 +24,7 @@ if (!$bill_select_results) {
 	error_respond(401, $mysqli->error);
 }
 if ($bill_select_results->num_rows != 1) {
-	error_respond(401, 'No Most Current Bill. ');
+	error_respond(500, 'No Most Current Bill. ');
 }
 
 $bill = $bill_select_results->fetch_assoc();
