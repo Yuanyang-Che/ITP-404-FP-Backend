@@ -38,7 +38,7 @@ foreach ($debt_select_result as $debt) {
 $response = [
 	'status_code' => 200,
 	'message' => 'Get Total Debt Success. ',
-	'total_bill' => $total_debt
+	'total_debt' => $total_debt
 ];
 
 echo json_encode($response);
