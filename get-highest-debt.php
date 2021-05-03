@@ -12,35 +12,64 @@ $mysqli = get_mysqli();
 
 check_user_id($mysqli, $user_id);
 
+
 $statement = $mysqli->prepare("
-	SELECT u1.id AS payer_id, u1.username AS payer_name, u2.id AS receiver_id, u2.username AS receiver_name, amount
+	SELECT amount, username
 	FROM debt_info
-	LEFT JOIN user_info u1
-	    ON u1.id = debt_info.payer_id
-	LEFT JOIN user_info u2
-	    ON u2.id = debt_info.receiver_id
-	WHERE payer_id = ?
-		OR receiver_id = ?
-	ORDER BY amount DESC
-	LIMIT 1;");
-$statement->bind_param('ii', $user_id, $user_id);
+		LEFT JOIN user_info ui ON ui.id = debt_info.receiver_id
+	WHERE payer_id = ?;");
+$statement->bind_param('i', $user_id);
 $statement->execute();
-$bill_select_results = $statement->get_result();
-if (!$bill_select_results) {
+$debt_select_result = $statement->get_result();
+if (!$debt_select_result) {
 	error_respond(401, $mysqli->error);
 }
-if ($bill_select_results->num_rows != 1) {
-	error_respond(500, 'No Highest Debt. ');
+if ($debt_select_result->num_rows == 0) {
+	error_respond(500, 'No Debt. ');
 }
 
-$bill = $bill_select_results->fetch_assoc();
+
+$debts = [];
+foreach ($debt_select_result as $row) {
+	$debt = [
+		'amount' => $row['amount'],
+		'username' => $row['username']
+	];
+	array_push($debts, $debt);
+}
+
+
+$statement = $mysqli->prepare("
+	SELECT amount
+	FROM debt_info
+	WHERE receiver_id = ?;");
+$statement->bind_param('i', $user_id);
+$statement->execute();
+$debt_select_result = $statement->get_result();
+if (!$debt_select_result) {
+	error_respond(401, $mysqli->error);
+}
+if ($debt_select_result->num_rows == 0) {
+	error_respond(500, 'No Debt. ');
+}
+
+
+for ($i = 0; $i < count($debts); $i++) {
+	$debts[$i]['amount'] -= $debt_select_result->fetch_assoc()['amount'];
+}
+
+$max_index = 0;
+for ($i = 0; $i < count($debts); $i++) {
+	if ($debts[$i]['amount'] > $debts[$max_index]['amount']) {
+		$max_index = $i;
+	}
+}
 
 $response = [
 	'status_code' => 200,
 	'message' => 'Highest Debt Success',
-	'user_id' => $user_id,
-	'username' => $bill['payer_id'] == $user_id ? $bill['receiver_name'] : $bill['payer_name'],
-	'amount' => $bill['amount']
+	'username' => $debts[$max_index]['username'],
+	'amount' => $debts[$max_index]['amount']
 ];
 
 echo json_encode($response);

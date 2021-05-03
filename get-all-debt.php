@@ -10,17 +10,15 @@ if (!isset($user_id) && trim($user_id) === '') {
 
 $mysqli = get_mysqli();
 
-$user_select_result = check_user_id($mysqli, $user_id);
-$username = $user_select_result->fetch_assoc()['username'];
+check_user_id($mysqli, $user_id);
+
 
 $statement = $mysqli->prepare("
-	SELECT debt_info.id AS id, amount, u1.username AS payer_name, u2.username AS receiver_name
+	SELECT amount, username
 	FROM debt_info
-		LEFT JOIN user_info u1 ON u1.id = debt_info.payer_id
-		LEFT JOIN user_info u2 ON u2.id = debt_info.receiver_id
-	WHERE payer_id = ?
-	   OR receiver_id = ?;");
-$statement->bind_param('ii', $user_id, $user_id);
+		LEFT JOIN user_info ui ON ui.id = debt_info.receiver_id
+	WHERE payer_id = ?;");
+$statement->bind_param('i', $user_id);
 $statement->execute();
 $debt_select_result = $statement->get_result();
 if (!$debt_select_result) {
@@ -33,13 +31,31 @@ if ($debt_select_result->num_rows == 0) {
 
 $debts = [];
 foreach ($debt_select_result as $row) {
-	$name = $row['payer_name'] != $username ? $row['payer_name'] : $row['receiver_name'];
 	$debt = [
-		'id' => $row['id'],
 		'amount' => $row['amount'],
-		'username' => $name,
+		'username' => $row['username']
 	];
 	array_push($debts, $debt);
+}
+
+
+$statement = $mysqli->prepare("
+	SELECT amount
+	FROM debt_info
+	WHERE receiver_id = ?;");
+$statement->bind_param('i', $user_id);
+$statement->execute();
+$debt_select_result = $statement->get_result();
+if (!$debt_select_result) {
+	error_respond(401, $mysqli->error);
+}
+if ($debt_select_result->num_rows == 0) {
+	error_respond(500, 'No Debt. ');
+}
+
+
+for ($i = 0; $i < count($debts); $i++) {
+	$debts[$i]['amount'] -= $debt_select_result->fetch_assoc()['amount'];
 }
 
 $response = [
