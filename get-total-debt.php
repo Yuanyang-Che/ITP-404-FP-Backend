@@ -4,6 +4,7 @@ require 'config.php';
 $data = json_decode(file_get_contents('php://input'), true);
 
 $user_id = $data['user_id'];
+
 if (!isset($user_id) && trim($user_id) === '') {
 	error_respond(401, 'No user_id provided.');
 }
@@ -11,13 +12,11 @@ if (!isset($user_id) && trim($user_id) === '') {
 $mysqli = get_mysqli();
 
 $user_select_result = check_user_id($mysqli, $user_id);
-$username = $user_select_result->fetch_assoc()['username'];
+
 
 $statement = $mysqli->prepare("
-	SELECT id, amount, u1.username AS payer_name, u2.username AS receiver_name
+	SELECT amount
 	FROM debt_info
-		LEFT JOIN user_info u1 ON u1.id = debt_info.payer_id
-		LEFT JOIN user_info u2 ON u2.id = debt_info.receiver_id
 	WHERE payer_id = ?
 	   OR receiver_id = ?;");
 $statement->bind_param('ii', $user_id, $user_id);
@@ -31,20 +30,15 @@ if ($debt_select_result->num_rows == 0) {
 }
 
 
-$debts = [];
-foreach ($debt_select_result as $row) {
-	$name = $row['payer_name'] != $username ? $row['payer_name'] : $row['receiver_name'];
-	$debt = [
-		'id' => $row['id'],
-		'amount' => $row['amount'],
-		'username' => $name,
-	];
-	array_push($debts, $debt);
+$total_debt = 0.0;
+foreach ($debt_select_result as $debt) {
+	$total_debt += $debt['amount'];
 }
 
 $response = [
 	'status_code' => 200,
-	'debts' => $debts,
+	'message' => 'Get Total Debt Success. ',
+	'total_bill' => $total_debt
 ];
 
 echo json_encode($response);
