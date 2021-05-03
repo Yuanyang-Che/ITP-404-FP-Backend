@@ -14,7 +14,7 @@ $user_select_result = check_user_id($mysqli, $user_id);
 $username = $user_select_result->fetch_assoc()['username'];
 
 $statement = $mysqli->prepare("
-	SELECT id, amount, u1.username AS payer_name, u2.username AS receiver_name
+	SELECT debt_info.id AS id, amount, u1.username AS payer_name, u2.username AS receiver_name
 	FROM debt_info
 		LEFT JOIN user_info u1 ON u1.id = debt_info.payer_id
 		LEFT JOIN user_info u2 ON u2.id = debt_info.receiver_id
