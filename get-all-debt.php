@@ -1,9 +1,11 @@
 <?php
 require 'config.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
+//$data = json_decode(file_get_contents('php://input'), true);
 
-$user_id = $data['user_id'];
+//$user_id = $data['user_id'];
+
+$user_id = 9;
 if (!isset($user_id) && trim($user_id) === '') {
 	error_respond(401, 'No user_id provided.');
 }
@@ -24,8 +26,8 @@ $debt_select_result = $statement->get_result();
 if (!$debt_select_result) {
 	error_respond(401, $mysqli->error);
 }
-if ($debt_select_result->num_rows == 0) {
-	error_respond(500, 'No Debt. ');
+if ($debt_select_result->num_rows === 0) {
+	error_respond(500, 'No Payer Debt. ');
 }
 
 
@@ -50,7 +52,7 @@ if (!$debt_select_result) {
 	error_respond(401, $mysqli->error);
 }
 if ($debt_select_result->num_rows == 0) {
-	error_respond(500, 'No Debt. ');
+	error_respond(500, 'No Receiver Debt. ');
 }
 
 

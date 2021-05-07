@@ -55,6 +55,21 @@ if ($debt_select_result->num_rows == 0) {
 	if ($statement->affected_rows != 1) {
 		error_respond(401, 'New Debt Failed.');
 	}
+	
+	//Create record for the other way around
+	$statement = $mysqli->prepare("
+		INSERT INTO
+		debt_info(receiver_id, payer_id, amount)
+		VALUES (?, ?, 0);");
+	$statement->bind_param('ii', $payer_id, $receiver_id);
+	$debt_insert_result = $statement->execute();
+	
+	if (!$debt_insert_result) {
+		error_respond(401, $mysqli->error);
+	}
+	if ($statement->affected_rows != 1) {
+		error_respond(401, 'New Debt Failed.');
+	}
 }
 //Update existing debt relationship
 else {
