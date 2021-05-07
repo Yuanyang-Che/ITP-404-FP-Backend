@@ -1,10 +1,10 @@
 <?php
 require 'config.php';
 
-//$data = json_decode(file_get_contents('php://input'), true);
+$data = json_decode(file_get_contents('php://input'), true);
 
-//$user_id = $data['user_id'];
-$user_id = 9;
+$user_id = $data['user_id'];
+
 if (!isset($user_id) && trim($user_id) === '') {
 	error_respond(401, 'No user_id provided.');
 }
