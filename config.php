@@ -1,9 +1,14 @@
 <?php
 
-const DB_HOST = '303.itpwebdev.com';
-const DB_NAME = 'kshan_fp_db';
-const DB_USER = 'kshan_fp_user';
-const DB_PASS = 'USCitp303!';
+//const DB_HOST = '303.itpwebdev.com';
+//const DB_NAME = 'kshan_fp_db';
+//const DB_USER = 'kshan_fp_user';
+//const DB_PASS = 'USCitp303!';
+
+const DB_HOST = 'jtb9ia3h1pgevwb1.cbetxkdyhwsb.us-east-1.rds.amazonaws.com';
+const DB_NAME = 'kr5i4ae5ehlrcpyy';
+const DB_USER = 'sbl8g3th14lphbn4';
+const DB_PASS = 'kh410npdl7kg6r8d';
 
 function error_respond($status_code, $message)
 {
