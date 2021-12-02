@@ -31,3 +31,10 @@ if (!$update_bill_result) {
 if ($statement->affected_rows != 1) {
 	error_respond(500, 'Same Bill Info.');
 }
+
+$response = [
+	'status_code' => 200,
+	'message' => 'Toggle Bill Favorite Success.'
+];
+
+echo json_encode($response);
