@@ -15,7 +15,7 @@ check_user_id($mysqli, $user_id);
 
 
 $statement = $mysqli->prepare("
-	SELECT amount, username
+	SELECT debt_info.id AS id, amount, username
 	FROM debt_info
 		LEFT JOIN user_info ui ON ui.id = debt_info.receiver_id
 	WHERE payer_id = ?;");
@@ -33,6 +33,7 @@ if ($debt_select_result->num_rows === 0) {
 $debts = [];
 foreach ($debt_select_result as $row) {
 	$debt = [
+		'id' => $row['id'],
 		'amount' => $row['amount'],
 		'username' => $row['username']
 	];
