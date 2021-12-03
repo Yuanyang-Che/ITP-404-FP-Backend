@@ -22,23 +22,13 @@ $debt_select_result = $statement->get_result();
 if (!$debt_select_result) {
 	error_respond(401, $mysqli->error);
 }
-if ($debt_select_result->num_rows === 0) {
+if ($debt_select_result->num_rows !== 1) {
 	error_respond(500, 'No Such Debt. ');
-}
-
-$debts = [];
-foreach ($debt_select_result as $row) {
-	$debt = [
-		'id' => $row['id'],
-		'amount' => $row['amount'],
-		'receiver_id' => $row['username']
-	];
-	array_push($debts, $debt);
 }
 
 $response = [
 	'status_code' => 200,
-	'debts' => $debts,
+	'debts' => $debt_select_result->fetch_assoc(),
 ];
 
 echo json_encode($response);
