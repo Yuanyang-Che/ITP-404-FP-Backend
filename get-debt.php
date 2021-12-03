@@ -28,7 +28,7 @@ if ($debt_select_result->num_rows !== 1) {
 
 $response = [
 	'status_code' => 200,
-	'debts' => $debt_select_result->fetch_assoc(),
+	'debt' => $debt_select_result->fetch_assoc(),
 ];
 
 echo json_encode($response);
