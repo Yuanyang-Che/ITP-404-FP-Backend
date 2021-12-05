@@ -14,7 +14,7 @@ check_user_id($mysqli, $user_id);
 
 
 $statement = $mysqli->prepare("
-	SELECT debt_info.payer_id as id, amount, username
+	SELECT debt_info.receiver_id as id, amount, username
 	FROM debt_info
 		LEFT JOIN user_info ui ON ui.id = debt_info.receiver_id
 	WHERE payer_id = ?;");
