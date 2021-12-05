@@ -14,7 +14,7 @@ check_user_id($mysqli, $user_id);
 
 
 $statement = $mysqli->prepare("
-	SELECT amount, username
+	SELECT debt_info.receiver_id as id, amount, username
 	FROM debt_info
 		LEFT JOIN user_info ui ON ui.id = debt_info.receiver_id
 	WHERE payer_id = ?;");
@@ -32,6 +32,7 @@ if ($debt_select_result->num_rows == 0) {
 $debts = [];
 foreach ($debt_select_result as $row) {
 	$debt = [
+		'id' => $row['id'],
 		'amount' => $row['amount'],
 		'username' => $row['username']
 	];
@@ -68,6 +69,7 @@ for ($i = 0; $i < count($debts); $i++) {
 $response = [
 	'status_code' => 200,
 	'message' => 'Highest Debt Success',
+	'id'=> $debts[$max_index]['id'],
 	'username' => $debts[$max_index]['username'],
 	'amount' => $debts[$max_index]['amount']
 ];
